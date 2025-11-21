@@ -1,0 +1,14 @@
+Project Name: Secure AI Monitoring Sandbox
+
+Note: Extended database details placeholder. See also: 07_database_design.txt and 08_database_design.txt
+
+This document extends the base database design with indices, constraints, and additional tables for notifications, actions, and auditing.
+
+Sections to be completed:
+1. Indices for Events, AI_Feedback, Logs
+2. Constraints on Events target (file vs folder)
+3. Notifications, Actions, AuditLog table definitions
+4. RLS policy sketch and roles/permissions mapping
+5. Migration/versioning approach
+
+

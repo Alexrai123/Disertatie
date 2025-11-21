@@ -1,0 +1,47 @@
+Project Name: Secure AI Monitoring Sandbox
+
+Note: This normalized document mirrors 05_modules_composition.txt. See also: 05_modules_composition.txt
+
+Modules Composition:
+
+1. User Management Module:
+   - Handles user authentication, role assignment, and session management.
+   - Interfaces with the AI Engine to enforce role-based permissions.
+   - Allows Admin to view logs and configure AI rules.
+
+2. File Monitoring Module:
+   - Watches selected directories for file system events (create, delete, modify).
+   - Sends events to the AI Engine for evaluation.
+   - Maintains a secure log of all monitored activities.
+
+3. AI Engine Module:
+   - Core intelligence module responsible for analyzing events.
+   - Maintains rule sets and adapts rules based on Admin feedback.
+   - Generates alerts and proposes automated actions when necessary.
+
+4. Notification Module:
+   - Sends alerts to Admin through email or in-app notifications.
+   - Supports delayed notifications and automatic action triggers.
+   - Logs all notifications and Admin responses.
+
+5. Chatbot Module:
+   - Provides natural language interface for Admin to query system logs and AI decisions.
+   - Supports rule adjustments and system queries through text input.
+   - Restricted access: available only for Admin role.
+
+6. Database Module:
+   - Handles storage and retrieval of logs, AI rules, user data, and configuration.
+   - Uses PostgreSQL for persistent and secure data storage.
+   - Ensures compatibility for migration to other applications without losing AI rules.
+
+7. Security Module:
+   - Manages encryption/decryption of sensitive data.
+   - Implements role-based access control across modules.
+   - Monitors for unauthorized access attempts and integrates with AI Engine alerts.
+
+8. Reporting Module:
+   - Generates activity summaries, AI decisions, and alert reports.
+   - Provides export options for audit and compliance purposes.
+   - Interfaces with Notification Module to deliver reports to Admin.
+
+

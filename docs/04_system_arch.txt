@@ -1,0 +1,60 @@
+Project Name: Secure AI Monitoring Sandbox
+
+Note: This normalized document supersedes 04_system_architecture.txt. See also: 04_system_architecture.txt
+
+System Architecture Overview:
+
+1. Overview:
+   - The system is composed of three main layers: 
+     1. User Interface (UI)
+     2. Application Logic (AI Engine + Functional Modules)
+     3. Data Storage (Databases)
+   - The architecture supports modularity, scalability, and secure interactions between components.
+
+2. Components:
+
+   a) User Interface:
+      - Web-based or desktop interface for Admin and User roles.
+      - Admin dashboard for monitoring alerts, reviewing AI decisions, and accessing chatbot.
+      - User interface allows adding/removing folders/files and viewing system notifications relevant to their role.
+
+   b) Application Logic:
+      - Event Monitor: Observes file/folder activity in real-time.
+      - AI Engine:
+         - Processes events based on predefined rules and admin feedback.
+         - Generates notifications and proposes actions.
+         - Adapts rules dynamically over time.
+      - Action Executor:
+         - Performs automated actions based on AI decisions (e.g., block IPs, quarantine files).
+         - Ensures sandbox containment for all critical operations.
+      - Notification System:
+         - Sends messages to Admin for decision-making.
+         - Handles delayed actions if Admin does not respond in time.
+
+   c) Data Storage:
+      - PostgreSQL Database for:
+         - User authentication and role management
+         - System logs
+         - Folder/file monitoring configurations
+      - Optional separate database (or schema) for AI rules persistence.
+      - Encryption applied to sensitive data fields (passwords, AI rules).
+
+3. Data Flow:
+   1. User adds folder/file → Event Monitor tracks changes.
+   2. Event triggers → AI Engine evaluates against rules.
+   3. AI Engine:
+      - If Admin intervention required → Notification sent.
+      - If automatic action allowed → Action Executor performs action.
+   4. Logs and decisions stored in Database.
+   5. Admin can interact with AI via Chatbot to query system or adjust rules.
+
+4. Security Considerations:
+   - Role-based access restricts features (Admin/User).
+   - Sandbox ensures AI actions do not impact host system beyond allowed scope.
+   - Secure communication channels between UI, AI Engine, and Database.
+
+5. Deployment:
+   - Application can run natively or within Docker containers.
+   - Database configuration ensures persistence and adaptability for migrations.
+
+

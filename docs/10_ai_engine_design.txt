@@ -1,0 +1,59 @@
+Project Name: Secure AI Monitoring Sandbox
+
+AI Engine Overview:
+
+The AI Engine is the core intelligence of the application, responsible for monitoring, analyzing, and responding to system events in a sandboxed environment.
+
+1. Components:
+
+   a) Event Listener:
+      - Monitors file system activities (create, delete, modify)
+      - Captures relevant metadata (timestamps, file paths, user actions)
+      - Queues events for processing
+
+   b) Rules Processor:
+      - Evaluates events against predefined AI behaviour rules
+      - Rules include severity levels, automatic actions, notifications
+      - Supports dynamic adaptation based on Admin feedback
+      - Stores adaptive rules in the database for persistence
+
+   c) Decision Maker:
+      - Determines appropriate actions based on severity and rules
+      - Can take autonomous actions if Admin does not respond within defined time
+      - Actions include file/folder quarantine, alert notifications, logging
+
+   d) Notification System:
+      - Sends alerts/messages to Admin
+      - Can escalate based on severity
+      - Integrates with Frontend for real-time updates
+
+   e) Logging Module:
+      - Records all events, actions, and AI decisions
+      - Supports audit and research purposes
+      - Logs stored securely in the database
+
+   f) Feedback Processor:
+      - Receives Admin feedback on AI decisions
+      - Updates adaptive rules accordingly
+      - Ensures AI learns over time without manual rule modification
+
+2. Security & Access:
+
+   - AI Engine only interacts with Admin via secured channels
+   - Rules and logs are encrypted in the database
+   - Role-based access ensures only Admin can query AI chatbot
+
+3. Extensibility:
+
+   - New rules can be added dynamically
+   - Engine can be migrated to separate applications without losing behaviour history
+   - Supports modular expansion (e.g., integrating machine learning modules in future)
+
+4. Design Goals:
+
+   - Autonomy with safe constraints
+   - Persistent learning and adaptation
+   - Secure and auditable operations
+   - Decoupled architecture for modular deployment
+
+See also (normalized): 14_ai_engine_design.txt

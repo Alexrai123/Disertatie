@@ -1,0 +1,24 @@
+[tool.ruff]
+line-length = 100
+select = [
+  "E",  # pycodestyle errors
+  "F",  # pyflakes
+]
+ignore = [
+  "E501",  # line length handled by formatter rules
+  "E402",  # allow module level imports after env setup in tests
+]
+
+[tool.ruff.isort]
+known-first-party = ["app"]
+
+[tool.mypy]
+python_version = "3.12"
+pretty = true
+strict = false
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_return_any = true
+show_error_codes = true
+namespace_packages = true
+ignore_missing_imports = true

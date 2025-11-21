@@ -1,0 +1,71 @@
+Project Name: Secure AI Monitoring Sandbox
+
+Application Architecture Overview:
+
+1. Layers:
+
+   a) Presentation Layer:
+      - React-based frontend for Admin and User interaction
+      - Admin dashboard with AI chatbot, logs, and monitoring overview
+      - User interface for folder/file management
+      - Authentication: login system with role-based access (Admin/User)
+      - Secure communication via HTTPS
+
+   b) Business Logic Layer:
+      - AI Engine Module:
+          - Monitors file system events
+          - Evaluates severity of events
+          - Determines actions based on AI Behaviour Rules
+          - Sends notifications to Admin
+      - Event Management Module:
+          - Logs events, user actions, AI decisions
+          - Supports real-time updates
+      - Access Control Module:
+          - Enforces Admin/User role permissions
+          - Integrates with authentication module
+
+   c) Data Layer:
+      - PostgreSQL database for:
+          - Users and authentication
+          - AI behaviour rules and adaptive thresholds
+          - Logs of events, decisions, and feedback
+          - File/folder metadata (not file content)
+      - ORM layer (SQLAlchemy or equivalent) for database operations
+      - Secure password storage with hashing (e.g., bcrypt)
+
+2. Modules:
+
+   - Frontend Module (React)
+   - Backend Module (FastAPI/Express)
+   - AI Engine Module
+   - Database Module (PostgreSQL)
+   - Logging Module
+   - Notification Module (Admin alerts)
+
+3. Communication:
+
+   - Frontend ↔ Backend: REST API or WebSocket for real-time updates
+   - Backend ↔ AI Engine: internal API calls
+   - Backend ↔ Database: ORM or direct SQL queries
+   - AI Engine ↔ Admin: notifications via app messages
+
+4. Security:
+
+   - Role-based access control (Admin/User)
+   - Encrypted passwords
+   - Secure data storage for AI rules
+   - Restricted access to AI chatbot for Admin only
+
+5. Deployment:
+
+   - Docker-ready architecture for isolated environment
+   - Modular structure allows future expansion
+   - AI Engine can be migrated to a separate app while maintaining rules in the database
+
+6. Extensibility:
+
+   - New monitoring rules can be added without code changes
+   - Frontend can support new views for future user types
+   - Backend modules are decoupled for easy maintenance
+
+See also (normalized): 13_app_arch.txt

@@ -1,0 +1,100 @@
+Project Name: Secure AI Monitoring Sandbox
+
+Database Overview:
+
+The database stores all application data securely, including user information, system events, AI rules, logs, and adaptive behaviour data.
+
+1. Database Choice:
+
+   - PostgreSQL is preferred over SQLite due to:
+     - Scalability for multiple users and larger datasets
+     - Advanced security features (roles, permissions, encryption)
+     - Better support for concurrent access
+     - Persistence across AI engine migrations
+
+2. Tables:
+
+   a) Users:
+      - id (PK)
+      - username
+      - password_hash
+      - role (admin/user)
+      - created_at
+      - last_login
+
+   b) Folders:
+      - id (PK)
+      - name
+      - path
+      - owner_id (FK -> Users.id)
+      - created_at
+      - modified_at
+
+   c) Files:
+      - id (PK)
+      - name
+      - path
+      - folder_id (FK -> Folders.id)
+      - owner_id (FK -> Users.id)
+      - created_at
+      - modified_at
+      - hash (optional checksum for integrity)
+
+   d) AI_Rules:
+      - id (PK)
+      - rule_name
+      - description
+      - severity_level
+      - action_type
+      - adaptive_flag (boolean)
+      - last_updated
+      - stored_in_engine (boolean)
+
+   e) Events:
+      - id (PK)
+      - event_type (create, delete, modify)
+      - target_file_id (FK -> Files.id)
+      - target_folder_id (FK -> Folders.id)
+      - triggered_by_user_id (FK -> Users.id)
+      - timestamp
+      - processed_flag (boolean)
+
+   f) AI_Feedback:
+      - id (PK)
+      - event_id (FK -> Events.id)
+      - admin_id (FK -> Users.id)
+      - feedback_type (approve/reject/modify)
+      - comment
+      - timestamp
+
+   g) Logs:
+      - id (PK)
+      - log_type
+      - message
+      - related_event_id (FK -> Events.id, nullable)
+      - timestamp
+
+3. Security Measures:
+
+   - All sensitive data (passwords, rules) stored encrypted
+   - Role-based access for tables (user/admin)
+   - Audit logs for all critical actions
+
+4. Relationships:
+
+   - Users -> Folders (1:N)
+   - Users -> Files (1:N)
+   - Folders -> Files (1:N)
+   - Events -> Files/Folders (N:1)
+   - AI_Feedback -> Events (1:1)
+   - Logs -> Events (N:1, optional)
+
+5. Design Goals:
+
+   - Persistent storage for AI rules and adaptive behaviour
+   - High security with role-based access
+   - Support for migration and modular expansion
+   - Maintain auditability and traceability
+
+See also (normalized): 08_database_design.txt
+See also (extended): 11_database_design_extended.txt

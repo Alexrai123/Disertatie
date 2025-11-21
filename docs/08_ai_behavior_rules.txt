@@ -1,0 +1,49 @@
+Project Name: Secure AI Monitoring Sandbox
+
+AI Behaviour Rules:
+
+1. Initialization:
+   - AI loads default rule set from the database at startup.
+   - Rules include severity thresholds, action templates, and notification priorities.
+
+2. Event Evaluation:
+   - For each detected file/folder event, AI evaluates:
+       - Type of event: create, modify, delete
+       - Criticality based on file type, location, and sensitivity
+       - Context: time of day, frequency of similar events, past patterns
+   - Generates a severity score (Low, Medium, High, Critical).
+
+3. Action Determination:
+   - Based on severity, AI decides on action:
+       - Low: Log event only
+       - Medium: Notify Admin
+       - High: Notify Admin + suggest action
+       - Critical: Notify Admin + automated action if no response
+
+4. Feedback Adaptation:
+   - Admin can provide feedback on AI decisions.
+   - AI updates internal rule weights and thresholds accordingly.
+   - Updated rules are persisted in the database for future sessions.
+
+5. Escalation Rules:
+   - If Admin does not respond within the specified time:
+       - Minor alerts: AI waits
+       - Major/Critical alerts: AI may execute predefined safe actions
+
+6. Rule Persistence:
+   - All AI rules, including adapted thresholds and decision weights, are stored in PostgreSQL.
+   - Rules remain consistent across application restarts or migrations.
+
+7. Security & Access Control:
+   - AI only exposes chatbot and rule query functionality to Admins.
+   - User role can only trigger monitoring events (add/remove folders/files), without accessing AI rules or logs.
+
+8. Logging:
+   - Every AI decision, adaptation, and automated action is logged.
+   - Logs include timestamp, event details, severity, decision, and Admin feedback.
+
+9. Learning Boundaries:
+   - AI can adapt rules but cannot perform actions outside predefined safe operations.
+   - Ensures AI cannot cause unintentional system or data damage.
+
+See also (normalized): 12_ai_behaviour_rules.txt

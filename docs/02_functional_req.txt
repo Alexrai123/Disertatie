@@ -1,0 +1,48 @@
+Project Name: Secure AI Monitoring Sandbox
+
+Note: This normalized document supersedes 02_functional_requirements.txt. See also: 02_functional_requirements.txt
+
+Functional Requirements:
+
+1. User and Admin Roles:
+   - Admin: Can configure system, access AI chatbot, manage rules, view logs, and approve or override automated actions.
+   - User: Can add/remove monitored folders and files, view own activity logs.
+
+2. System Monitoring:
+   - Monitor specified folders and individual files for changes (create, modify, delete).
+   - Log all file events with timestamps and user info.
+   - Detect suspicious activities based on predefined rules.
+
+3. AI Behavior:
+   - AI adapts its decision-making based on admin feedback.
+   - AI can autonomously execute actions if admin does not respond within a configurable timeout.
+   - AI maintains persistent rules across application sessions and can migrate them to other applications if needed.
+
+4. Notifications and Alerts:
+   - Notify admin of critical events via system messages.
+   - Escalate notifications if no response is received within defined time limits.
+   - Different actions based on the severity of alerts.
+
+5. Security:
+   - Encrypt sensitive data such as passwords and AI rules.
+   - Restrict access to logs and AI outputs based on user roles.
+   - Ensure sandboxed operations to prevent affecting the host system.
+
+6. Database:
+   - Support PostgreSQL for persistent storage of monitored data, AI rules, and configuration.
+   - Provide automated database migrations if schema changes occur.
+
+7. Chatbot (Admin Only):
+   - Access system logs and summaries.
+   - Respond to queries regarding system status or monitored events.
+   - Limited to admin users only for security purposes.
+
+8. File and Folder Management:
+   - Add or remove folders/files from monitoring.
+   - Define rules for monitoring on a per-folder or per-file basis.
+
+9. Workflow Automation:
+   - Support automated actions such as alert resolution, logging, or file backup.
+   - Actions can be customized based on severity and admin approval.
+
+

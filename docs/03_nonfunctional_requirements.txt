@@ -1,0 +1,43 @@
+Project Name: Secure AI Monitoring Sandbox
+
+Non-Functional Requirements:
+
+1. Performance:
+   - The system should detect file changes and process events in near real-time.
+   - AI decision-making latency should not exceed predefined thresholds for critical events.
+
+2. Scalability:
+   - Support increasing numbers of monitored files and folders without significant degradation in performance.
+   - Database and AI modules should handle growing datasets efficiently.
+
+3. Reliability and Availability:
+   - System must run continuously without crashes or unexpected shutdowns.
+   - AI rules and configurations must persist across restarts.
+   - Notifications should not be lost even if the admin is temporarily unavailable.
+
+4. Security:
+   - Encrypted storage for sensitive data (passwords, AI rules, logs).
+   - Role-based access control to restrict features based on user roles (Admin/User).
+   - Sandbox environment to prevent AI or monitoring actions from affecting the host system outside defined boundaries.
+
+5. Maintainability:
+   - Modular code structure to allow easy updates or feature additions.
+   - Clear documentation for system architecture, AI behavior, and database design.
+   - Logging and error reporting to facilitate debugging and maintenance.
+
+6. Usability:
+   - Simple and clear interface for adding/removing folders or files for monitoring.
+   - Intuitive access to notifications and logs for the admin user.
+   - Minimal configuration required for initial setup.
+
+7. Portability:
+   - The system should be deployable on multiple platforms (Windows/Linux) using Docker if desired.
+   - PostgreSQL database support to allow consistent deployment across environments.
+
+8. Adaptability:
+   - AI behavior rules should adapt based on admin feedback.
+   - Ability to migrate AI rules between different instances of the application.
+   - System should accommodate future integration with other monitoring tools or services.
+
+See also (normalized): 03_non_func_req.txt
+

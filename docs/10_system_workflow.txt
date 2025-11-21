@@ -1,0 +1,53 @@
+Project Name: Secure AI Monitoring Sandbox
+
+Note: This normalized document mirrors 06_system_workflow.txt. See also: 06_system_workflow.txt
+
+System Workflow:
+
+1. User Authentication:
+   - User/Admin logs in through the login interface.
+   - Credentials are verified against the database.
+   - Session is created with assigned role (Admin/User).
+
+2. File/Folder Registration:
+   - User selects folders or individual files to monitor.
+   - The system validates paths and registers them in the database.
+   - AI Engine is notified of new monitoring targets.
+
+3. File Monitoring:
+   - File Monitoring Module continuously watches the selected directories/files.
+   - Detected events (create, modify, delete) are sent to the AI Engine for analysis.
+
+4. AI Analysis:
+   - AI Engine evaluates events based on its current rule set.
+   - Determines severity and recommended actions.
+   - Stores event analysis and decision in the database.
+
+5. Notifications & Alerts:
+   - If an event is deemed critical, Admin is notified via the Notification Module.
+   - If Admin does not respond within a predefined timeframe:
+       - Minor alerts: system waits for Admin response.
+       - Critical alerts: AI Engine may take automated action.
+
+6. Admin Interaction:
+   - Admin can view alerts, logs, and AI decisions.
+   - Admin can provide feedback to adjust AI rules.
+   - Admin can query system via Chatbot Module (logs, rules, summaries).
+
+7. User Interaction:
+   - Users can add/remove monitored folders and files.
+   - Users have limited visibility: cannot access AI rules or Chatbot features.
+   
+8. Logging & Persistence:
+   - All events, decisions, notifications, and user actions are logged.
+   - Data is stored in PostgreSQL for persistence and audit purposes.
+
+9. Rule Adaptation:
+   - AI Engine adjusts its behavior based on Admin feedback.
+   - Updated rules are saved in the database to maintain continuity across sessions.
+
+10. Reporting:
+   - Reports are generated on demand or scheduled.
+   - Summaries include monitored events, AI decisions, Admin responses, and system status.
+
+

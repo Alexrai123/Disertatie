@@ -1,0 +1,33 @@
+Project Name: Secure AI Monitoring Sandbox
+
+Purpose:
+The purpose of this project is to develop a secure, sandboxed monitoring application capable of observing system events, managing alerts, and taking autonomous decisions with AI support. The application is designed to provide notifications to administrators, allow configurable automated actions, and maintain strict security and logging standards.
+
+Goals:
+1. Provide a sandboxed environment to monitor system activities and file operations without affecting the host system.
+2. Implement AI-based decision-making that adapts over time according to administrator feedback.
+3. Enable user and admin roles with specific permissions:
+   - Admin: Full access including AI chatbot, configuration, and management of system rules.
+   - User: Limited access to add/remove folders and files.
+4. Maintain persistent rules for AI behavior, allowing the AI to retain learned rules across sessions and even across multiple applications.
+5. Offer secure, encrypted storage of sensitive data, including passwords, system logs, and AI decision records.
+6. Allow configurable automated actions for common security incidents (e.g., multiple failed login attempts).
+
+High-Level Description:
+The application consists of a multi-layer architecture combining a core AI engine, a system monitoring module, and a secure storage/database layer. It is designed to run in a sandboxed environment to prevent unintended system modifications while still providing a realistic operational monitoring scenario.
+
+Key Features:
+- Real-time monitoring of system events.
+- Adaptive AI for decision-making based on predefined rules and admin feedback.
+- Notifications to admins for critical events with escalation policies if no response is given.
+- Role-based access control with distinct permissions for admins and users.
+- Optional database integration (PostgreSQL) for persistent storage and rule management.
+- Security-focused design including encrypted storage and access controls.
+- Workflow support for automated or semi-automated responses to alerts.
+
+Research Potential:
+The project includes research elements in the AI adaptation and decision-making process. Specifically:
+- Comparison of AI-driven automated responses versus manual intervention.
+- Evaluation of persistence mechanisms for AI rules and their impact on system behavior.
+- Assessment of sandbox environment effectiveness in isolating monitoring processes from the host system.
+
