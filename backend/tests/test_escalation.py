@@ -29,9 +29,15 @@ def test_escalation_runs_via_background_tasks(client: TestClient):
     # User triggers an event
     user_token = get_token(client, "user", "userpass")
     uheaders = {"Authorization": f"Bearer {user_token}"}
+    
+    # Create a folder first to use in the event
+    folder_resp = client.post("/folders/", json={"name": "test_folder", "path": "/tmp/test_folder"}, headers=uheaders)
+    assert folder_resp.status_code == 200, folder_resp.text
+    folder = folder_resp.json()
+    
     eresp = client.post(
         "/events/",
-        json={"event_type": "modify", "target_file_id": None, "target_folder_id": None},
+        json={"event_type": "modify", "target_folder_id": folder["id"]},
         headers=uheaders,
     )
     assert eresp.status_code == 200, eresp.text

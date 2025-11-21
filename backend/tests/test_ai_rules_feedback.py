@@ -30,10 +30,15 @@ def test_ai_rules_crud_admin_only_and_feedback(client: TestClient):
     resp = client.get("/ai-rules/", headers=uheaders)
     assert resp.status_code in (401, 403)
 
+    # Create a folder first to use in the event
+    resp = client.post("/folders/", json={"name": "test_folder", "path": "/tmp/test_folder"}, headers=uheaders)
+    assert resp.status_code == 200, resp.text
+    folder = resp.json()
+
     # Create an event as user, then give admin feedback
     resp = client.post(
         "/events/",
-        json={"event_type": "modify", "target_file_id": None, "target_folder_id": None},
+        json={"event_type": "modify", "target_folder_id": folder["id"]},
         headers=uheaders,
     )
     assert resp.status_code == 200

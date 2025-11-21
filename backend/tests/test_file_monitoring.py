@@ -38,15 +38,15 @@ class TestFileMonitorService:
     def test_service_initialization(self, monitor_service):
         """Test that service initializes correctly."""
         assert monitor_service is not None
-        assert not monitor_service.is_running()
+        assert not monitor_service.running
     
     def test_service_start_stop(self, monitor_service):
         """Test starting and stopping the service."""
         monitor_service.start()
-        assert monitor_service.is_running()
+        assert monitor_service.running
         
         monitor_service.stop()
-        assert not monitor_service.is_running()
+        assert not monitor_service.running
     
     def test_add_folder_to_monitoring(self, monitor_service, temp_dir, db_session):
         """Test adding a folder to monitoring."""
@@ -63,7 +63,7 @@ class TestFileMonitorService:
         monitor_service.add_folder(folder.id, temp_dir)
         
         # Verify folder is being monitored
-        assert folder.id in monitor_service._watched_folders
+        assert folder.id in monitor_service.watched_folders
     
     def test_remove_folder_from_monitoring(self, monitor_service, temp_dir, db_session):
         """Test removing a folder from monitoring."""
@@ -77,11 +77,11 @@ class TestFileMonitorService:
         db_session.commit()
         
         monitor_service.add_folder(folder.id, temp_dir)
-        assert folder.id in monitor_service._watched_folders
+        assert folder.id in monitor_service.watched_folders
         
         # Remove from monitoring
         monitor_service.remove_folder(folder.id)
-        assert folder.id not in monitor_service._watched_folders
+        assert folder.id not in monitor_service.watched_folders
     
     def test_file_create_event_detection(self, monitor_service, temp_dir, db_session):
         """Test that file creation events are detected."""
@@ -198,9 +198,9 @@ class TestFileMonitorService:
         # Get status
         status = monitor_service.get_status()
         
-        assert "is_running" in status
-        assert "watched_folders_count" in status
-        assert status["watched_folders_count"] >= 1
+        assert "running" in status
+        assert "watched_folders" in status
+        assert status["watched_folders"] >= 1
     
     def test_ignore_hidden_files(self, monitor_service, temp_dir, db_session):
         """Test that hidden files are ignored."""

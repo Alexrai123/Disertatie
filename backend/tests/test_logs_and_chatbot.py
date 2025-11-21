@@ -7,9 +7,15 @@ def test_logs_visibility_and_chatbot_endpoints(client: TestClient):
     # user creates an event to generate logs
     user_token = get_token(client, "user", "userpass")
     uheaders = {"Authorization": f"Bearer {user_token}"}
+    
+    # Create a folder first to use in the event
+    folder_resp = client.post("/folders/", json={"name": "test_folder", "path": "/tmp/test_folder"}, headers=uheaders)
+    assert folder_resp.status_code == 200, folder_resp.text
+    folder = folder_resp.json()
+    
     client.post(
         "/events/",
-        json={"event_type": "modify", "target_file_id": None, "target_folder_id": None},
+        json={"event_type": "modify", "target_folder_id": folder["id"]},
         headers=uheaders,
     )
 

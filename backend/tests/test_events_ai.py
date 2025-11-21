@@ -8,10 +8,15 @@ def test_event_triggers_ai_and_notify_log(client: TestClient):
     token = get_token(client, "user", "userpass")
     headers = {"Authorization": f"Bearer {token}"}
 
+    # Create a folder first to use in the event
+    folder_resp = client.post("/folders/", json={"name": "test_folder", "path": "/tmp/test_folder"}, headers=headers)
+    assert folder_resp.status_code == 200, folder_resp.text
+    folder = folder_resp.json()
+
     # Create an event
     resp = client.post(
         "/events/",
-        json={"event_type": "modify", "target_file_id": None, "target_folder_id": None},
+        json={"event_type": "modify", "target_folder_id": folder["id"]},
         headers=headers,
     )
     assert resp.status_code == 200, resp.text
