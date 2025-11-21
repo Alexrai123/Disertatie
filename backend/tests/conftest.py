@@ -14,7 +14,7 @@ os.environ["DATABASE_URL"] = TEST_DB_URL
 import bcrypt
 if not hasattr(bcrypt, "__about__"):
     class About:
-        __version__ = bcrypt.__version__  # type: ignore
+        __version__ = getattr(bcrypt, "__version__", "unknown")
     bcrypt.__about__ = About()  # type: ignore
 
 # Patch bcrypt to handle long passwords (avoid ValueError in passlib check)
