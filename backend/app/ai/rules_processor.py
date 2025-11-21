@@ -97,7 +97,7 @@ def evaluate_event(db: Session, event: Event) -> RuleEvaluationResult:
     confidence = min(best_score / max_possible_score, 1.0)
     
     return RuleEvaluationResult(
-        severity=best_rule.severity_level,
+        severity=best_rule.severity_level or "Medium",
         matched_rule_id=best_rule.id,
         confidence=confidence
     )

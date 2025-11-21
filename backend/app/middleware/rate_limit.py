@@ -4,10 +4,8 @@
 # - Different limits for different endpoint types
 
 from __future__ import annotations
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi import Limiter
 from slowapi.util import get_remote_address
-from slowapi.errors import RateLimitExceeded
-from fastapi import Request
 
 # Create limiter instance
 limiter = Limiter(key_func=get_remote_address)
@@ -26,3 +24,13 @@ READ_RATE_LIMIT = "100/minute"
 
 # Very generous for health checks
 HEALTH_RATE_LIMIT = "1000/minute"
+
+# Rate limit exceeded handler
+async def _rate_limit_exceeded_handler(request, exc):
+    """Handler for rate limit exceeded errors"""
+    from fastapi.responses import JSONResponse
+    return JSONResponse(
+        status_code=429,
+        content={"error": "Rate limit exceeded", "detail": str(exc)}
+    )
+

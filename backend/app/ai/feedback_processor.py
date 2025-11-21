@@ -129,7 +129,7 @@ def _adapt_rule(
     
     elif feedback_type == "modify" and suggested_severity:
         # Admin provided a better severity level - learn from it
-        old_severity = rule.severity_level
+        old_severity = rule.severity_level or "Medium"
         rule.severity_level = suggested_severity
         rule.adaptive_flag = True  # Mark as adaptive since admin corrected it
         

@@ -3,11 +3,10 @@ Tests for file monitoring service.
 """
 import pytest
 import tempfile
-import os
 import time
 from pathlib import Path
 from app.services.file_monitor import FileMonitorService
-from app.database import SessionLocal
+from app.db import SessionLocal
 from app.models import Folder, Event
 
 

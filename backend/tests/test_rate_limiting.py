@@ -1,8 +1,6 @@
 """
 Tests for rate limiting middleware.
 """
-import pytest
-import time
 from fastapi.testclient import TestClient
 from app.main import app
 

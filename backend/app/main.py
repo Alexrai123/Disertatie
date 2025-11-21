@@ -153,7 +153,7 @@ app.include_router(monitoring.router, prefix="/monitoring", tags=["monitoring"])
 
 # Chatbot endpoints (admin-only) are provided in dedicated router
 try:
-    from .routers import chatbot  # type: ignore
+    from .routers import chatbot
     app.include_router(chatbot.router, prefix="/chatbot", tags=["chatbot"])
 except Exception:
     # Router may not exist if not yet created; ignore in dev

@@ -7,18 +7,15 @@
 from __future__ import annotations
 import logging
 import threading
-import time
 from pathlib import Path
-from typing import Dict, Set
+from typing import Dict
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler, FileSystemEvent
-from sqlalchemy.orm import Session
 from sqlalchemy import select
 
 from ..db import SessionLocal
-from ..models import Folder, File, Event, User, Log
+from ..models import Folder, File, Event, Log
 from ..ai.event_listener import handle_event
-from fastapi import BackgroundTasks
 
 logger = logging.getLogger("app.file_monitor")
 

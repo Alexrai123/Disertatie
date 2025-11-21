@@ -2,10 +2,8 @@
 # Centralized validation for security and data integrity
 
 from __future__ import annotations
-import os
 import re
 from pathlib import Path
-from typing import Optional
 from fastapi import HTTPException
 
 
@@ -65,6 +63,34 @@ def validate_path(path: str, must_exist: bool = False, must_be_absolute: bool = 
         raise ValidationError(f"Path does not exist: {path_str}")
     
     return str(resolved_path)
+
+
+def sanitize_path(path: str) -> str:
+    """
+    Sanitize path by removing directory traversal sequences.
+    
+    This is a simpler version of validate_path that just removes
+    suspicious patterns without raising errors.
+    
+    Args:
+        path: Path to sanitize
+        
+    Returns:
+        Sanitized path with traversal sequences removed
+    """
+    if not path or not isinstance(path, str):
+        return ""
+    
+    # Remove directory traversal patterns
+    sanitized = path.replace("..", "").replace("~", "")
+    
+    # Normalize the path
+    try:
+        path_obj = Path(sanitized)
+        return str(path_obj)
+    except (ValueError, OSError):
+        return sanitized
+
 
 
 def validate_password_strength(password: str) -> None:

@@ -31,11 +31,11 @@ class TokenData:
 
 
 def verify_password(plain_password: str, password_hash: str) -> bool:
-    return pwd_context.verify(plain_password, password_hash)
+    return bool(pwd_context.verify(plain_password, password_hash))
 
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    return str(pwd_context.hash(password))
 
 
 def authenticate_user(db: Session, username: str, password: str) -> Optional[User]:
@@ -52,7 +52,7 @@ def create_access_token(*, data: dict, expires_delta: Optional[timedelta] = None
     expire = datetime.now(tz=timezone.utc) + (expires_delta or timedelta(minutes=settings.access_token_expires_minutes))
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
-    return encoded_jwt
+    return str(encoded_jwt)
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
