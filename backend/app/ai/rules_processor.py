@@ -32,7 +32,8 @@ def _get_cached_rules(db: Session) -> list[AIRule]:
     if cache_key in _rule_cache:
         rules, timestamp = _rule_cache[cache_key]
         if now - timestamp < _cache_ttl:
-            return rules
+            # Merge cached rules into current session to avoid DetachedInstanceError
+            return [db.merge(rule) for rule in rules]
     
     # Cache miss or expired - reload from database
     rules = load_rules(db)

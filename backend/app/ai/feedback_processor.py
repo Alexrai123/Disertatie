@@ -41,7 +41,6 @@ def submit_feedback(
         feedback_type=feedback_type,
         comment=comment,
         timestamp=datetime.now(tz=timezone.utc),
-        suggested_severity=suggested_severity,
     )
     db.add(fb)
     db.commit()
