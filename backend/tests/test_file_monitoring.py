@@ -31,7 +31,7 @@ class TestFileMonitorService:
     @pytest.fixture
     def monitor_service(self, db_session):
         """Create a file monitor service instance."""
-        service = FileMonitorService(db_session)
+        service = FileMonitorService()
         yield service
         service.stop()
     

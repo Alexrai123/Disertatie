@@ -16,7 +16,7 @@ class TestRateLimiting:
         # Make requests up to the limit
         for i in range(5):  # AUTH_RATE_LIMIT is typically 5/minute
             response = client.post(
-                "/auth/login",
+                "/auth/token",
                 data={"username": "test", "password": "test"}
             )
             # Should get either 401 (invalid creds) or 200 (valid), but not 429
@@ -24,7 +24,7 @@ class TestRateLimiting:
         
         # Next request should be rate limited
         response = client.post(
-            "/auth/login",
+            "/auth/token",
             data={"username": "test", "password": "test"}
         )
         # Might be rate limited depending on timing
