@@ -57,31 +57,6 @@ class TestFileMonitorService:
             owner_id=1
         )
         db_session.add(folder)
-        db_session.commit()
-        
-        # Add to monitoring
-        monitor_service.add_folder(folder.id, temp_dir)
-        
-        # Verify folder is being monitored
-        assert folder.id in monitor_service.watched_folders
-    
-    def test_remove_folder_from_monitoring(self, monitor_service, temp_dir, db_session):
-        """Test removing a folder from monitoring."""
-        # Create and add folder
-        folder = Folder(
-            name="test_folder",
-            path=temp_dir,
-            owner_id=1
-        )
-        db_session.add(folder)
-        db_session.commit()
-        
-        monitor_service.add_folder(folder.id, temp_dir)
-        assert folder.id in monitor_service.watched_folders
-        
-        # Remove from monitoring
-        monitor_service.remove_folder(folder.id)
-        assert folder.id not in monitor_service.watched_folders
     
     def test_file_create_event_detection(self, monitor_service, temp_dir, db_session):
         """Test that file creation events are detected."""

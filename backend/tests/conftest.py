@@ -12,11 +12,11 @@ os.environ["DATABASE_URL"] = TEST_DB_URL
 
 # Patch bcrypt/passlib for tests
 import bcrypt
-import passlib.handlers.bcrypt
 if not hasattr(bcrypt, "__about__"):
     class About:
         __version__ = bcrypt.__version__
     bcrypt.__about__ = About()
+
 # Patch bcrypt to handle long passwords (avoid ValueError in passlib check)
 original_hashpw = bcrypt.hashpw
 def patched_hashpw(password, salt):
@@ -24,12 +24,10 @@ def patched_hashpw(password, salt):
         password = password[:72]
     return original_hashpw(password, salt)
 bcrypt.hashpw = patched_hashpw
-
 from app.main import app
 from app.db import Base
 from app.models import User
 from app.auth import get_password_hash
-from app.db import get_db as app_get_db # Import the original get_db
 
 
 def get_test_engine():
@@ -55,6 +53,11 @@ def db_session(db_engine):
     for tbl in reversed(Base.metadata.sorted_tables):
         db.execute(tbl.delete())
     db.commit()
+    
+    # Clear AI rule cache to prevent state leakage
+    from app.ai.rules_processor import clear_rule_cache
+    clear_rule_cache()
+    
     yield db
     db.close()
 
