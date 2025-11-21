@@ -56,6 +56,7 @@ def validate_path(path: str, must_exist: bool = False, must_be_absolute: bool = 
     path_str = str(resolved_path)
     for pattern in suspicious_patterns:
         if pattern in path:  # Check original path
+            print(f"DEBUG: Found suspicious pattern '{pattern}' in '{path}'")
             raise ValidationError(f"Path contains suspicious pattern: {pattern}")
     
     # Check if path exists (if required)

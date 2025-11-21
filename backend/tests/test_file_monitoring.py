@@ -193,6 +193,7 @@ class TestFileMonitorService:
         db_session.add(folder1)
         db_session.commit()
         
+        monitor_service.start()
         monitor_service.add_folder(folder1.id, temp_dir)
         
         # Get status

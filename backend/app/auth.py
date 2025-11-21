@@ -11,6 +11,18 @@ from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
+import bcrypt
+# Monkey patch bcrypt for passlib compatibility
+# See: https://github.com/pyca/bcrypt/issues/684
+if not hasattr(bcrypt, "__about__"):
+    class About:
+        __version__ = bcrypt.__version__
+    bcrypt.__about__ = About()
+
+# Patch passlib to skip wrap bug detection which fails with bcrypt >= 4.0
+import passlib.handlers.bcrypt
+passlib.handlers.bcrypt.detect_wrap_bug = lambda *args, **kwargs: False
+
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 

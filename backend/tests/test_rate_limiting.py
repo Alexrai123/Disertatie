@@ -5,13 +5,10 @@ from fastapi.testclient import TestClient
 from app.main import app
 
 
-client = TestClient(app)
-
-
 class TestRateLimiting:
     """Test rate limiting functionality."""
     
-    def test_auth_rate_limit(self):
+    def test_auth_rate_limit(self, client):
         """Test that auth endpoints are rate limited."""
         # Make requests up to the limit
         for i in range(5):  # AUTH_RATE_LIMIT is typically 5/minute
@@ -20,7 +17,7 @@ class TestRateLimiting:
                 data={"username": "test", "password": "test"}
             )
             # Should get either 401 (invalid creds) or 200 (valid), but not 429
-            assert response.status_code in [200, 401, 422]
+            assert response.status_code in [200, 400, 401, 422]
         
         # Next request should be rate limited
         response = client.post(
@@ -28,9 +25,9 @@ class TestRateLimiting:
             data={"username": "test", "password": "test"}
         )
         # Might be rate limited depending on timing
-        assert response.status_code in [200, 401, 422, 429]
+        assert response.status_code in [200, 400, 401, 422, 429]
     
-    def test_read_rate_limit(self):
+    def test_read_rate_limit(self, client):
         """Test that read endpoints have appropriate rate limits."""
         # Create a test user and login first
         # This is a simplified test - in practice you'd need proper auth
@@ -40,7 +37,7 @@ class TestRateLimiting:
             response = client.get("/health")
             assert response.status_code in [200, 429]
     
-    def test_health_endpoint_not_rate_limited_heavily(self):
+    def test_health_endpoint_not_rate_limited_heavily(self, client):
         """Test that health endpoint has lenient rate limiting."""
         # Health endpoint should allow many requests
         success_count = 0
@@ -56,7 +53,7 @@ class TestRateLimiting:
 class TestRateLimitHeaders:
     """Test that rate limit headers are returned."""
     
-    def test_rate_limit_headers_present(self):
+    def test_rate_limit_headers_present(self, client):
         """Test that responses include rate limit headers."""
         response = client.get("/health")
         

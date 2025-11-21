@@ -10,10 +10,26 @@ from sqlalchemy.orm import sessionmaker
 TEST_DB_URL = "sqlite:///./test_app.db"
 os.environ["DATABASE_URL"] = TEST_DB_URL
 
+# Patch bcrypt/passlib for tests
+import bcrypt
+import passlib.handlers.bcrypt
+if not hasattr(bcrypt, "__about__"):
+    class About:
+        __version__ = bcrypt.__version__
+    bcrypt.__about__ = About()
+# Patch bcrypt to handle long passwords (avoid ValueError in passlib check)
+original_hashpw = bcrypt.hashpw
+def patched_hashpw(password, salt):
+    if isinstance(password, bytes) and len(password) > 72:
+        password = password[:72]
+    return original_hashpw(password, salt)
+bcrypt.hashpw = patched_hashpw
+
 from app.main import app
 from app.db import Base
 from app.models import User
 from app.auth import get_password_hash
+from app.db import get_db as app_get_db # Import the original get_db
 
 
 def get_test_engine():
