@@ -16,8 +16,8 @@ import bcrypt
 # See: https://github.com/pyca/bcrypt/issues/684
 if not hasattr(bcrypt, "__about__"):
     class About:
-        __version__ = bcrypt.__version__
-    bcrypt.__about__ = About()
+        __version__ = bcrypt.__version__  # type: ignore
+    bcrypt.__about__ = About()  # type: ignore
 
 # Patch passlib to skip wrap bug detection which fails with bcrypt >= 4.0
 import passlib.handlers.bcrypt
