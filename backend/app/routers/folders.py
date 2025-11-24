@@ -35,7 +35,7 @@ def list_folders(
     folders = q.offset(offset).limit(limit).all()
     
     return {
-        "items": folders,
+        "items": [FolderOut.model_validate(f) for f in folders],
         "total": total,
         "limit": limit,
         "offset": offset,
@@ -45,6 +45,15 @@ def list_folders(
 
 @router.post("/", response_model=FolderOut)
 def create_folder(payload: FolderCreate, db: Session = Depends(get_db), current=Depends(get_current_user)):
+    # Check if folder already exists for this user
+    existing_folder = db.query(Folder).filter(
+        Folder.owner_id == current.id,
+        Folder.path == payload.path
+    ).first()
+    
+    if existing_folder:
+        raise HTTPException(status_code=400, detail="Folder with this path already exists")
+
     folder = Folder(name=payload.name, path=payload.path, owner_id=current.id)
     db.add(folder)
     db.commit()
@@ -64,7 +73,7 @@ def create_folder(payload: FolderCreate, db: Session = Depends(get_db), current=
             db.add(Log(log_type="FILE_MONITOR_ERROR", message=f"Failed to add folder {folder.id} to monitoring: {e}", related_event_id=None))
             db.commit()
     
-    return folder
+    return FolderOut.model_validate(folder)
 
 
 @router.delete("/{folder_id}")

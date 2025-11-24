@@ -235,3 +235,59 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         return this.props.children;
     }
 }
+
+// Modal Component
+interface ModalProps {
+    isOpen: boolean;
+    title: string;
+    children: React.ReactNode;
+    onClose: () => void;
+    onConfirm?: () => void;
+    confirmText?: string;
+    cancelText?: string;
+    confirmType?: 'primary' | 'danger' | 'success';
+}
+
+export const Modal: React.FC<ModalProps> = ({
+    isOpen,
+    title,
+    children,
+    onClose,
+    onConfirm,
+    confirmText = 'Confirm',
+    cancelText = 'Cancel',
+    confirmType = 'primary',
+}) => {
+    if (!isOpen) return null;
+
+    return (
+        <div className="modal-overlay">
+            <div className="modal" role="dialog" aria-modal="true">
+                <div className="modal-header">
+                    <h3 className="modal-title">{title}</h3>
+                    <button
+                        onClick={onClose}
+                        className="btn btn-sm btn-secondary"
+                        aria-label="Close modal"
+                    >
+                        ×
+                    </button>
+                </div>
+                <div className="modal-body">{children}</div>
+                <div className="modal-footer">
+                    <button onClick={onClose} className="btn btn-secondary">
+                        {cancelText}
+                    </button>
+                    {onConfirm && (
+                        <button
+                            onClick={onConfirm}
+                            className={`btn btn-${confirmType}`}
+                        >
+                            {confirmText}
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
