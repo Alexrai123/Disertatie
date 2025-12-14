@@ -11,7 +11,9 @@ from pathlib import Path
 from typing import Dict
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler, FileSystemEvent
+from watchdog.events import FileSystemEventHandler, FileSystemEvent
 from sqlalchemy import select
+from datetime import datetime, timezone
 
 from ..db import SessionLocal
 from ..models import Folder, File, Event, Log
@@ -48,6 +50,11 @@ class FolderEventHandler(FileSystemEventHandler):
                     select(File).where(File.path == path, File.folder_id == self.folder_id)
                 ).scalar_one_or_none()
                 
+                # Update modified timestamp if applicable
+                if event_type == "modify" and file_record:
+                    file_record.modified_at = datetime.now(timezone.utc)
+                    db.add(file_record)
+                
                 # Create event
                 event = Event(
                     event_type=event_type,
@@ -69,9 +76,13 @@ class FolderEventHandler(FileSystemEventHandler):
                 handle_event(db, event, background_tasks=None)
                 
                 # Add log entry
+                log_msg = f"File monitor detected {event_type} event: {path}"
+                if file_record:
+                    log_msg = f"File monitor detected {event_type} on monitored file: {file_record.name}"
+                
                 db.add(Log(
                     log_type="FILE_MONITOR",
-                    message=f"File monitor detected {event_type} event: {path}",
+                    message=log_msg,
                     related_event_id=event.id
                 ))
                 db.commit()
@@ -80,6 +91,61 @@ class FolderEventHandler(FileSystemEventHandler):
                 db.close()
         except Exception as e:
             logger.exception(f"Error creating event for {event_type} on {path}: {e}")
+
+    def _handle_move(self, src_path: str, dest_path: str):
+        """Handle file move/rename event"""
+        try:
+            db = SessionLocal()
+            try:
+                # Get folder info
+                folder = db.get(Folder, self.folder_id)
+                if not folder:
+                    return
+
+                # Find file by old path
+                file_record = db.execute(
+                    select(File).where(File.path == src_path, File.folder_id == self.folder_id)
+                ).scalar_one_or_none()
+
+                event_type = "move"
+                
+                if file_record:
+                    # Update file record
+                    old_name = file_record.name
+                    new_name = Path(dest_path).name
+                    file_record.path = dest_path
+                    file_record.name = new_name
+                    file_record.modified_at = datetime.now(timezone.utc)
+                    db.add(file_record)
+                    
+                    log_msg = f"File moved/renamed: '{old_name}' -> '{new_name}'"
+                else:
+                    log_msg = f"Untracked file moved: {src_path} -> {dest_path}"
+
+                # Create event
+                event = Event(
+                    event_type=event_type,
+                    target_file_id=file_record.id if file_record else None,
+                    target_folder_id=self.folder_id,
+                    triggered_by_user_id=folder.owner_id,
+                    processed_flag=False,
+                )
+                db.add(event)
+                db.commit()
+                db.refresh(event)
+                
+                # Log
+                db.add(Log(
+                    log_type="FILE_MOVE",
+                    message=log_msg,
+                    related_event_id=event.id
+                ))
+                db.commit()
+
+            finally:
+                db.close()
+        except Exception as e:
+            logger.exception(f"Error handling move {src_path} -> {dest_path}: {e}")
     
     def on_created(self, event: FileSystemEvent):
         if not event.is_directory:
@@ -95,6 +161,11 @@ class FolderEventHandler(FileSystemEventHandler):
         if not event.is_directory:
             logger.debug(f"File deleted: {event.src_path}")
             self._create_event("delete", event.src_path)
+
+    def on_moved(self, event: FileSystemEvent):
+        if not event.is_directory:
+            logger.debug(f"File moved: {event.src_path} -> {event.dest_path}")
+            self._handle_move(event.src_path, event.dest_path)
 
 
 class FileMonitorService:
@@ -182,7 +253,7 @@ class FileMonitorService:
             
             # Schedule with observer
             if self.observer:
-                self.observer.schedule(handler, folder_path, recursive=False)
+                self.observer.schedule(handler, folder_path, recursive=True)
                 self.watched_folders[folder_id] = folder_path
                 logger.info(f"Now watching folder {folder_id}: {folder_path}")
         
@@ -197,7 +268,8 @@ class FileMonitorService:
                 return
             
             if folder_id in self.watched_folders:
-                logger.info(f"Folder {folder_id} already being watched")
+                path = self.watched_folders[folder_id]
+                logger.info(f"Folder {folder_id} ({path}) already being watched")
                 return
             
             self._watch_folder(folder_id, folder_path)
@@ -208,6 +280,9 @@ class FileMonitorService:
             if folder_id not in self.watched_folders:
                 return
             
+            # Get path before removing for logging
+            folder_path = self.watched_folders.get(folder_id, "unknown")
+            
             # Unschedule the handler
             handler = self.handlers.get(folder_id)
             if handler and self.observer:
@@ -216,7 +291,7 @@ class FileMonitorService:
                 # For now, just remove from our tracking
                 del self.watched_folders[folder_id]
                 del self.handlers[folder_id]
-                logger.info(f"Stopped watching folder {folder_id}")
+                logger.info(f"Stopped watching folder {folder_id}: {folder_path}")
     
     def get_status(self) -> dict:
         """Get current monitoring status"""

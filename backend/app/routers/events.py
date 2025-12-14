@@ -23,7 +23,7 @@ router = APIRouter()
 def list_events(
     limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
-    event_type: Optional[str] = Query(default=None, pattern="^(create|modify|delete)$"),
+    event_type: Optional[str] = Query(default=None, pattern="^(create|modify|delete|move)$"),
     processed: Optional[bool] = Query(default=None),
     db: Session = Depends(get_db),
     current=Depends(get_current_user)
@@ -54,7 +54,7 @@ def list_events(
     events = q.order_by(Event.timestamp.desc()).offset(offset).limit(limit).all()
     
     return {
-        "items": events,
+        "items": [EventOut.model_validate(e) for e in events],
         "total": total,
         "limit": limit,
         "offset": offset,
@@ -82,7 +82,7 @@ def create_event(
     db.refresh(e)
     # Trigger AI Event Listener (14_ai_engine_design.txt §1(a); 08_ai_behavior_rules.txt §2-§3)
     handle_event(db, e, background_tasks=background_tasks)
-    return e
+    return EventOut.model_validate(e)
 
 
 @router.get("/{event_id}", response_model=EventOut)
@@ -92,5 +92,5 @@ def get_event(event_id: int, db: Session = Depends(get_db), current=Depends(get_
         raise HTTPException(status_code=404, detail="Event not found")
     if current.role != "admin" and e.triggered_by_user_id != current.id:
         raise HTTPException(status_code=403, detail="Forbidden")
-    return e
+    return EventOut.model_validate(e)
 

@@ -211,7 +211,7 @@ def validate_event_type(event_type: str) -> str:
     
     event_type = event_type.strip().lower()
     
-    allowed_types = {'create', 'modify', 'delete'}
+    allowed_types = {'create', 'modify', 'delete', 'move'}
     if event_type not in allowed_types:
         raise ValidationError(f"Event type must be one of: {', '.join(allowed_types)}")
     

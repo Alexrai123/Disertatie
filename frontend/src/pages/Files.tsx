@@ -210,6 +210,38 @@ export default function Files() {
                 ))}
               </select>
             </div>
+
+            <div className="form-group" style={{ display: 'flex', alignItems: 'flex-end' }}>
+              <input
+                type="file"
+                id="file-upload"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file && folderId) {
+                    setName(file.name);
+                    const selectedFolder = folders.find(f => f.id === folderId);
+                    if (selectedFolder) {
+                      // Construct path based on OS separators (assuming mostly forward slashes for Docker/Linux/Web)
+                      const separator = selectedFolder.path.includes('\\') ? '\\' : '/';
+                      const cleanPath = selectedFolder.path.endsWith(separator)
+                        ? selectedFolder.path
+                        : selectedFolder.path + separator;
+                      setPath(cleanPath + file.name);
+                    }
+                  }
+                }}
+              />
+              <button
+                type="button"
+                className="btn btn-secondary"
+                disabled={!folderId}
+                onClick={() => document.getElementById('file-upload')?.click()}
+                title={!folderId ? "Select a parent folder first" : "Browse for a file"}
+              >
+                📂 Browse
+              </button>
+            </div>
           </div>
 
           <button

@@ -33,7 +33,7 @@ def list_files(
     files = q.offset(offset).limit(limit).all()
     
     return {
-        "items": files,
+        "items": [FileOut.model_validate(f) for f in files],
         "total": total,
         "limit": limit,
         "offset": offset,
@@ -47,6 +47,12 @@ def create_file(payload: FileCreate, db: Session = Depends(get_db), current=Depe
     folder = db.get(Folder, payload.folder_id)
     if not folder or folder.owner_id != current.id:
         raise HTTPException(status_code=404, detail="Folder not found or not owned by user")
+    
+    # Check if file already exists
+    existing = db.query(File).filter(File.path == payload.path, File.folder_id == payload.folder_id).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="File already monitored in this folder")
+
     f = File(name=payload.name, path=payload.path, folder_id=payload.folder_id, owner_id=current.id)
     db.add(f)
     db.commit()
@@ -54,7 +60,7 @@ def create_file(payload: FileCreate, db: Session = Depends(get_db), current=Depe
     # Audit log
     db.add(Log(log_type="FILE_CREATE", message=f"FILE_CREATE: User {current.id} created file {f.id}", related_event_id=None))
     db.commit()
-    return f
+    return FileOut.model_validate(f)
 
 
 @router.delete("/{file_id}")

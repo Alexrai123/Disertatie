@@ -60,7 +60,7 @@ def create_folder(payload: FolderCreate, db: Session = Depends(get_db), current=
     db.refresh(folder)
     
     # Audit log
-    db.add(Log(log_type="FOLDER_CREATE", message=f"FOLDER_CREATE: User {current.id} created folder {folder.id}", related_event_id=None))
+    db.add(Log(log_type="FOLDER_CREATE", message=f"FOLDER_CREATE: User {current.username.upper()} added folder {folder.name}: {folder.path}", related_event_id=None))
     db.commit()
     
     # Add to file monitoring service if enabled
@@ -82,6 +82,10 @@ def delete_folder(folder_id: int, db: Session = Depends(get_db), current=Depends
     if not folder or folder.owner_id != current.id:
         raise HTTPException(status_code=404, detail="Folder not found")
     
+    # Capture path for logging
+    folder_path = folder.path
+    folder_name = folder.name
+
     # Remove from file monitoring service if enabled
     if settings.enable_file_monitoring:
         try:
@@ -94,7 +98,7 @@ def delete_folder(folder_id: int, db: Session = Depends(get_db), current=Depends
     db.commit()
     
     # Audit log
-    db.add(Log(log_type="FOLDER_DELETE", message=f"FOLDER_DELETE: User {current.id} deleted folder {folder_id}", related_event_id=None))
+    db.add(Log(log_type="FOLDER_DELETE", message=f"FOLDER_DELETE: User {current.username.upper()} deleted folder {folder_name}: {folder_path}", related_event_id=None))
     db.commit()
     
     return {"status": "deleted"}

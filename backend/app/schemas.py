@@ -186,7 +186,7 @@ class AIRuleOut(AIRuleBase):
 
 # Events
 class EventBase(BaseModel):
-    event_type: str = Field(..., pattern="^(create|modify|delete)$")
+    event_type: str = Field(..., pattern="^(create|modify|delete|move)$")
     target_file_id: Optional[int] = Field(None, gt=0)
     target_folder_id: Optional[int] = Field(None, gt=0)
     
@@ -195,16 +195,7 @@ class EventBase(BaseModel):
     def validate_event_type_value(cls, v: str) -> str:
         return validate_event_type(v)
     
-    @field_validator('target_folder_id')
-    @classmethod
-    def validate_xor_constraint(cls, v: Optional[int], info) -> Optional[int]:
-        # Ensure either file_id or folder_id is set, but not both
-        file_id = info.data.get('target_file_id')
-        if file_id is None and v is None:
-            raise ValueError("Either target_file_id or target_folder_id must be set")
-        if file_id is not None and v is not None:
-            raise ValueError("Cannot set both target_file_id and target_folder_id")
-        return v
+
 
 
 class EventCreate(EventBase):

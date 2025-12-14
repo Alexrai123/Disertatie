@@ -25,6 +25,9 @@ services:
       - db
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./monitored_files:/monitored_files
 
   frontend:
     build:
@@ -34,6 +37,9 @@ services:
       - backend
     ports:
       - "5173:80"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
 
 volumes:
   db_data:
